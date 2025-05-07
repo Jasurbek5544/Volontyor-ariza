@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <title>Ariza PDF</title>
+    <style>
+        body { font-family: DejaVu Sans, sans-serif; font-size: 15px; color: #222; }
+        .header { text-align: right; margin-bottom: 30px; }
+        .title { text-align: center; font-size: 22px; font-weight: bold; margin-bottom: 30px; }
+        .content { margin-bottom: 30px; }
+        .label { font-weight: bold; }
+        .row { margin-bottom: 12px; }
+        .footer { margin-top: 40px; }
+        .info-sign-row { display: flex; justify-content: space-between; margin-top: 40px; }
+        .info-block { min-width: 260px; }
+        .sign-section { margin-top: 20px; }
+        .sign-label { font-weight: bold; display: inline-block; margin-bottom: 4px; }
+        .sign-line { width: 120px; border-top: 1px solid #888; margin-top: 5px; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        Samarqand viloyati<br>
+        Ijtimoiy himoya milliy agentligi<br>
+        direktori v.v.b S.Luqmonovga<br> <span style="display:inline-block; border-bottom:1px solid #222; min-width:180px;">&nbsp;{{ application.last_name }} {{ application.first_name }}&nbsp;</span>
+        tomonidan
+    </div>
+
+    <div class="title">Ariza</div>
+
+    <div class="content">
+        Men, <b>{{ application.last_name }} {{ application.first_name }} {{ application.middle_name }}</b>,
+        Samarqand shahar "Inson" ijtimoiy xizmatlar Markazi qoshidagi Inklyuziv rivojlanish markaziga
+        <b>{{ application.direction.name }}</b> yo'nalishi bo'yicha boshlang'ich kasbiy ta'lim olish uchun
+        o'quv jarayoniga qabul qilishingizni so'rayman.
+    </div>
+
+    <div class="info-sign-row" style="align-items: flex-start;">
+        <div class="info-block">
+            <div class="row"><span class="label">Sana:</span> {{ application.created_at|date:"d.m.Y" }}</div>
+            <div class="row"><span class="label">Manzil:</span> {{ application.address }}</div>
+            <div class="row"><span class="label">Telefon:</span> {{ application.phone }}</div>
+            <div class="sign-section">
+                <div class="sign-label">Imzo:</div>
+                <div class="sign-line">&nbsp;</div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

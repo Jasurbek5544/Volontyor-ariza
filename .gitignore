@@ -1,0 +1,34 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.pyc
+
+# Django
+*.sqlite3
+*.log
+*.pot
+*.pyc
+*.pyo
+*.db
+*.mo
+
+# Env
+venv/
+.env
+
+# Media
+/media/
+/media/*
+
+# VSCode va boshqa IDE
+.vscode/
+.idea/
+.DS_Store
+
+# OS
+Thumbs.db
+
+# Migration cache
+ariza/migrations/__pycache__/ 

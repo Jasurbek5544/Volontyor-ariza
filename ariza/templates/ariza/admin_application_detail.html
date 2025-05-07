@@ -1,0 +1,72 @@
+{% extends 'ariza/base_admin.html' %}
+{% block title %}Ariza tafsilotlari{% endblock %}
+{% block header %}Ariza tafsilotlari{% endblock %}
+{% block content %}
+<div class="card p-4">
+    <div class="row mb-3">
+        <div class="col-md-6 mb-2">
+            <span class="info-label">Ism:</span> <span class="info-value">{{ application.first_name }}</span>
+        </div>
+        <div class="col-md-6 mb-2">
+            <span class="info-label">Familiya:</span> <span class="info-value">{{ application.last_name }}</span>
+        </div>
+        <div class="col-md-6 mb-2">
+            <span class="info-label">Otasining ismi:</span> <span class="info-value">{{ application.middle_name }}</span>
+        </div>
+        <div class="col-md-6 mb-2">
+            <span class="info-label">Telefon:</span> <span class="info-value">{{ application.phone }}</span>
+        </div>
+        <div class="col-md-6 mb-2">
+            <span class="info-label">Manzil:</span> <span class="info-value">{{ application.address }}</span>
+        </div>
+        <div class="col-md-6 mb-2">
+            <span class="info-label">Yo‘nalish:</span> <span class="info-value">{{ application.direction.name }}</span>
+        </div>
+        <div class="col-md-6 mb-2">
+            <span class="info-label">Yuborilgan sana:</span> <span class="info-value">{{ application.created_at|date:'Y-m-d H:i' }}</span>
+        </div>
+        <div class="col-md-6 mb-2">
+            <span class="info-label">Status:</span>
+            {% if application.status == 'pending' %}
+                <span class="badge bg-secondary">Ko‘rib chiqilmoqda</span>
+            {% elif application.status == 'accepted' %}
+                <span class="badge bg-success">Qabul qilingan</span>
+            {% elif application.status == 'rejected' %}
+                <span class="badge bg-danger">Bekor qilingan</span>
+            {% endif %}
+        </div>
+    </div>
+    <div class="row mb-3">
+        <div class="col-md-6 mb-3">
+            <span class="info-label">Passport rasmi:</span><br>
+            {% if application.passport_image %}
+                <a href="{{ application.passport_image.url }}" target="_blank">
+                    <img src="{{ application.passport_image.url }}" alt="Passport rasmi" class="img-thumbnail" style="max-width:180px;">
+                </a>
+            {% else %}
+                <span class="text-muted">Yuklanmagan</span>
+            {% endif %}
+        </div>
+        <div class="col-md-6 mb-3">
+            <span class="info-label">Selfi rasm:</span><br>
+            {% if application.selfie_image %}
+                <a href="{{ application.selfie_image.url }}" target="_blank">
+                    <img src="{{ application.selfie_image.url }}" alt="Selfi rasm" class="img-thumbnail" style="max-width:180px;">
+                </a>
+            {% else %}
+                <span class="text-muted">Yuklanmagan</span>
+            {% endif %}
+        </div>
+    </div>
+    <form method="post" class="mb-3">
+        {% csrf_token %}
+        {% if application.status != 'accepted' %}
+            <button name="set_status" value="accepted" class="btn btn-success me-2">Qabul qilish</button>
+        {% endif %}
+        {% if application.status != 'rejected' %}
+            <button name="set_status" value="rejected" class="btn btn-danger">Bekor qilish</button>
+        {% endif %}
+    </form>
+    <a href="{% url 'application_pdf' application.pk %}" class="btn btn-primary">PDF yuklab olish</a>
+</div>
+{% endblock %} 

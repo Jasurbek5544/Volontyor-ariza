@@ -1,0 +1,35 @@
+{% extends 'ariza/base_admin.html' %}
+{% block title %}Adminlar{% endblock %}
+{% block header %}Adminlar{% endblock %}
+{% block content %}
+<div class="card p-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h4 class="mb-0">Adminlar ro‘yxati</h4>
+        <a href="{% url 'admin_add' %}" class="btn btn-success">+ Yangi admin qo‘shish</a>
+    </div>
+    <table class="table table-hover align-middle">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Foydalanuvchi nomi</th>
+                <th>To‘liq ism</th>
+                <th>Email</th>
+                <th>Oxirgi kirish</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for admin in admins %}
+            <tr>
+                <td>{{ forloop.counter }}</td>
+                <td>{{ admin.username }}</td>
+                <td>{{ admin.get_full_name|default:'-' }}</td>
+                <td>{{ admin.email|default:'-' }}</td>
+                <td>{{ admin.last_login|date:'Y-m-d H:i' }}</td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="5" class="text-center">Adminlar yo‘q</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %} 

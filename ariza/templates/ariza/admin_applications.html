@@ -1,0 +1,46 @@
+{% extends 'ariza/base_admin.html' %}
+{% block title %}Arizalar{% endblock %}
+{% block header %}Arizalar{% endblock %}
+{% block content %}
+<div class="card p-4">
+    <h4 class="mb-4">Arizalar ro‘yxati</h4>
+    <table class="table table-hover align-middle">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Ism</th>
+                <th>Familiya</th>
+                <th>Telefon</th>
+                <th>Yo‘nalish</th>
+                <th>Status</th>
+                <th>Sana</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for app in applications %}
+            <tr>
+                <td>{{ forloop.counter }}</td>
+                <td>{{ app.first_name }}</td>
+                <td>{{ app.last_name }}</td>
+                <td>{{ app.phone }}</td>
+                <td>{{ app.direction.name }}</td>
+                <td>
+                    {% if app.status == 'pending' %}
+                        <span class="badge bg-secondary">Ko‘rib chiqilmoqda</span>
+                    {% elif app.status == 'accepted' %}
+                        <span class="badge bg-success">Qabul qilingan</span>
+                    {% elif app.status == 'rejected' %}
+                        <span class="badge bg-danger">Bekor qilingan</span>
+                    {% endif %}
+                </td>
+                <td>{{ app.created_at|date:'Y-m-d H:i' }}</td>
+                <td><a href="/dashboard/application/{{ app.pk }}/" class="btn btn-primary btn-sm">Ko‘rish</a></td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="7" class="text-center">Arizalar yo‘q</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %} 

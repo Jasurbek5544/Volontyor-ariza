@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <title>Ariza yuborish</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <style>
+        body {
+            background: linear-gradient(120deg, #f6fafd 60%, #e9f1fa 100%);
+        }
+        .main-card {
+            box-shadow: 0 4px 32px rgba(80,120,200,0.07);
+            border-radius: 22px;
+            border: none;
+            padding: 2.7rem 2rem;
+            background: #fff;
+        }
+        .form-label {
+            font-weight: 600;
+            color: #5a7bbd;
+            letter-spacing: 0.01em;
+        }
+        .form-control, .form-select {
+            border-radius: 12px;
+            min-height: 52px;
+            border: 2px solid #bcdffb;
+            background: #fafdff;
+            transition: border-color 0.2s, box-shadow 0.2s;
+            width: 100%;
+            font-size: 1.08rem;
+            padding-left: 16px;
+        }
+        .form-control:focus, .form-select:focus {
+            border-color: #7da0c4;
+            box-shadow: 0 0 0 2px #e3eaf3;
+            background: #f6fafd;
+        }
+        .input-group { width: 100%; }
+        .input-group .form-control, .input-group .form-select { width: 100%; flex: 1 1 0%; }
+        .input-group-text { min-width: 56px; }
+        .btn-primary {
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 1.1rem;
+            padding: 13px 0;
+            background: linear-gradient(90deg, #7da0c4 0%, #a3c7f7 100%);
+            border: none;
+            transition: box-shadow 0.2s, background 0.2s;
+            box-shadow: 0 2px 12px #a3c7f733;
+        }
+        .btn-primary:hover {
+            background: linear-gradient(90deg, #5a7bbd 0%, #7da0c4 100%);
+            box-shadow: 0 4px 18px #a3c7f755;
+        }
+        .form-section-title {
+            font-size: 1.35rem;
+            font-weight: 700;
+            color: #5a7bbd;
+            margin-bottom: 1.5rem;
+            text-align: center;
+            letter-spacing: 0.01em;
+        }
+        .required-star {
+            color: #e57373;
+        }
+    </style>
+</head>
+<body>
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-6 col-md-8">
+            <div class="main-card">
+                <div class="form-section-title mb-4">
+                    <i class="bi bi-pencil-square me-2"></i>Ariza yuborish
+                </div>
+                <form method="post" enctype="multipart/form-data" autocomplete="off">
+                    {% csrf_token %}
+                    <div class="row g-3">
+                        {% for field in form %}
+                        <div class="col-12">
+                            <label class="form-label">{{ field.label }}{% if field.field.required %}<span class="required-star">*</span>{% endif %}</label>
+                            <div class="input-group">
+                                {% if field.name == 'phone' %}
+                                    <span class="input-group-text">+998</span>
+                                    <input type="text" name="phone" maxlength="9" pattern="\d{9}" class="form-control" placeholder="901234567" required>
+                                {% else %}
+                                    {% if field.name == 'first_name' %}
+                                        <span class="input-group-text"><i class="bi bi-person"></i></span>
+                                    {% elif field.name == 'last_name' %}
+                                        <span class="input-group-text"><i class="bi bi-person-badge"></i></span>
+                                    {% elif field.name == 'middle_name' %}
+                                        <span class="input-group-text"><i class="bi bi-person-lines-fill"></i></span>
+                                    {% elif field.name == 'address' %}
+                                        <span class="input-group-text"><i class="bi bi-geo-alt"></i></span>
+                                    {% elif field.name == 'direction' %}
+                                        <span class="input-group-text"><i class="bi bi-diagram-3"></i></span>
+                                    {% elif field.name == 'passport_image' %}
+                                        <span class="input-group-text"><i class="bi bi-card-image"></i></span>
+                                    {% elif field.name == 'selfie_image' %}
+                                        <span class="input-group-text"><i class="bi bi-camera"></i></span>
+                                    {% else %}
+                                        <span class="input-group-text"><i class="bi bi-pencil"></i></span>
+                                    {% endif %}
+                                    {{ field }}
+                                {% endif %}
+                            </div>
+                            {% if field.help_text %}
+                                <div class="form-text">{{ field.help_text }}</div>
+                            {% endif %}
+                            {% for error in field.errors %}
+                                <div class="text-danger small">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                        {% endfor %}
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100 mt-4">
+                        <i class="bi bi-send me-2"></i>Yuborish
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
