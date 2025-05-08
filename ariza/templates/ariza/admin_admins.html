@@ -2,34 +2,194 @@
 {% block title %}Adminlar{% endblock %}
 {% block header %}Adminlar{% endblock %}
 {% block content %}
-<div class="card p-4">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h4 class="mb-0">Adminlar ro‘yxati</h4>
-        <a href="{% url 'admin_add' %}" class="btn btn-success">+ Yangi admin qo‘shish</a>
-    </div>
-    <table class="table table-hover align-middle">
-        <thead>
-            <tr>
-                <th>#</th>
-                <th>Foydalanuvchi nomi</th>
-                <th>To‘liq ism</th>
-                <th>Email</th>
-                <th>Oxirgi kirish</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for admin in admins %}
-            <tr>
-                <td>{{ forloop.counter }}</td>
-                <td>{{ admin.username }}</td>
-                <td>{{ admin.get_full_name|default:'-' }}</td>
-                <td>{{ admin.email|default:'-' }}</td>
-                <td>{{ admin.last_login|date:'Y-m-d H:i' }}</td>
-            </tr>
-            {% empty %}
-            <tr><td colspan="5" class="text-center">Adminlar yo‘q</td></tr>
-            {% endfor %}
-        </tbody>
-    </table>
+<style>
+    .admin-header {
+        background: linear-gradient(90deg, #1a2c4e 0%, #2c4b8c 100%);
+        color: white;
+        border-radius: 15px;
+        padding: 2rem;
+        margin-bottom: 2rem;
+        box-shadow: 0 4px 20px rgba(44,75,140,0.1);
+    }
+    .admin-header h4 {
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+    }
+    .admin-header p {
+        opacity: 0.9;
+        margin-bottom: 0;
+    }
+    .admin-card {
+        background: white;
+        border-radius: 15px;
+        padding: 1.5rem;
+        margin-bottom: 1rem;
+        box-shadow: 0 2px 15px rgba(0,0,0,0.05);
+        transition: transform 0.3s ease;
+    }
+    .admin-card:hover {
+        transform: translateY(-5px);
+    }
+    .admin-info {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+    .admin-avatar {
+        width: 50px;
+        height: 50px;
+        background: #e9ecef;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        color: #1a2c4e;
+    }
+    .admin-details {
+        flex: 1;
+    }
+    .admin-name {
+        font-weight: 600;
+        color: #1a2c4e;
+        margin-bottom: 0.25rem;
+    }
+    .admin-username {
+        color: #6c757d;
+        font-size: 0.9rem;
+    }
+    .admin-actions {
+        display: flex;
+        gap: 0.5rem;
+    }
+    .btn-action {
+        padding: 0.5rem 1rem;
+        border-radius: 50px;
+        font-size: 0.9rem;
+        font-weight: 500;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        transition: all 0.3s ease;
+    }
+    .btn-action:hover {
+        transform: translateY(-2px);
+    }
+    .btn-edit {
+        background: #cff4fc;
+        color: #0dcaf0;
+    }
+    .btn-edit:hover {
+        background: #b6effb;
+    }
+    .btn-delete {
+        background: #f8d7da;
+        color: #dc3545;
+    }
+    .btn-delete:hover {
+        background: #f5c2c7;
+    }
+    .add-admin-btn {
+        background: #d1e7dd;
+        color: #198754;
+        padding: 0.75rem 1.5rem;
+        border-radius: 50px;
+        font-weight: 500;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        margin-bottom: 1.5rem;
+    }
+    .add-admin-btn:hover {
+        background: #c3e6cb;
+        color: #198754;
+        transform: translateY(-2px);
+    }
+    .empty-state {
+        text-align: center;
+        padding: 3rem;
+        background: white;
+        border-radius: 15px;
+        box-shadow: 0 2px 15px rgba(0,0,0,0.05);
+    }
+    .empty-state i {
+        font-size: 3rem;
+        color: #6c757d;
+        margin-bottom: 1rem;
+    }
+    .empty-state h5 {
+        color: #1a2c4e;
+        margin-bottom: 0.5rem;
+    }
+    .empty-state p {
+        color: #6c757d;
+        margin-bottom: 1.5rem;
+    }
+    @media (max-width: 768px) {
+        .admin-info {
+            flex-direction: column;
+            text-align: center;
+        }
+        .admin-actions {
+            flex-direction: column;
+            width: 100%;
+        }
+        .btn-action {
+            width: 100%;
+            justify-content: center;
+        }
+    }
+</style>
+
+<div class="admin-header">
+    <h4>Adminlar ro'yxati</h4>
+    <p>Bu yerda barcha adminlar ro'yxatini ko'rishingiz va boshqarishingiz mumkin.</p>
 </div>
+
+<a href="{% url 'admin_add' %}" class="add-admin-btn">
+    <i class="bi bi-plus-lg"></i> Yangi admin qo'shish
+</a>
+
+<script>
+function confirmDelete(adminId, adminName) {
+    if (confirm(`"${adminName}" adminini o'chirishni xohlaysizmi?`)) {
+        window.location.href = `/dashboard/admins/${adminId}/delete/`;
+    }
+}
+</script>
+
+{% if admins %}
+    {% for admin in admins %}
+        <div class="admin-card">
+            <div class="admin-info">
+                <div class="admin-avatar">
+                    <i class="bi bi-person"></i>
+                </div>
+                <div class="admin-details">
+                    <div class="admin-name">{{ admin.first_name }} {{ admin.last_name }}</div>
+                    <div class="admin-username">{{ admin.username }}</div>
+                </div>
+                <div class="admin-actions">
+                    <a href="{% url 'admin_edit' admin.id %}" class="btn btn-action btn-edit">
+                        <i class="bi bi-pencil"></i> Tahrirlash
+                    </a>
+                    <button onclick="confirmDelete({{ admin.id }}, '{{ admin.first_name }} {{ admin.last_name }}')" class="btn btn-action btn-delete">
+                        <i class="bi bi-trash"></i> O'chirish
+                    </button>
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+{% else %}
+    <div class="empty-state">
+        <i class="bi bi-people"></i>
+        <h5>Adminlar mavjud emas</h5>
+        <p>Hozircha hech qanday admin qo'shilmagan.</p>
+        <a href="{% url 'admin_add' %}" class="add-admin-btn">
+            <i class="bi bi-plus-lg"></i> Yangi admin qo'shish
+        </a>
+    </div>
+{% endif %}
 {% endblock %} 

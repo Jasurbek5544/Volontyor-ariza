@@ -2,71 +2,327 @@
 {% block title %}Ariza tafsilotlari{% endblock %}
 {% block header %}Ariza tafsilotlari{% endblock %}
 {% block content %}
-<div class="card p-4">
-    <div class="row mb-3">
-        <div class="col-md-6 mb-2">
-            <span class="info-label">Ism:</span> <span class="info-value">{{ application.first_name }}</span>
+<style>
+    .detail-header {
+        background: linear-gradient(90deg, #1a2c4e 0%, #2c4b8c 100%);
+        color: white;
+        border-radius: 15px;
+        padding: 2rem;
+        margin-bottom: 2rem;
+        box-shadow: 0 4px 20px rgba(44,75,140,0.1);
+    }
+    .detail-header h4 {
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+    }
+    .detail-header p {
+        opacity: 0.9;
+        margin-bottom: 0;
+    }
+    .info-card {
+        background: white;
+        border-radius: 15px;
+        padding: 2rem;
+        margin-bottom: 2rem;
+        box-shadow: 0 2px 15px rgba(0,0,0,0.05);
+    }
+    .info-section {
+        margin-bottom: 2rem;
+    }
+    .info-section:last-child {
+        margin-bottom: 0;
+    }
+    .info-section h5 {
+        color: #1a2c4e;
+        font-weight: 600;
+        margin-bottom: 1.5rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 2px solid #e9ecef;
+    }
+    .info-row {
+        display: flex;
+        margin-bottom: 1rem;
+        flex-wrap: wrap;
+    }
+    .info-label {
+        color: #6c757d;
+        width: 150px;
+        font-weight: 500;
+    }
+    .info-value {
+        color: #1a2c4e;
+        flex: 1;
+    }
+    .status-badge {
+        padding: 0.5rem 1rem;
+        border-radius: 50px;
+        font-size: 0.9rem;
+        font-weight: 500;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    .status-new {
+        background: #e3f2fd;
+        color: #0d6efd;
+    }
+    .status-pending {
+        background: #f8f9fa;
+        color: #6c757d;
+    }
+    .status-accepted {
+        background: #d1e7dd;
+        color: #198754;
+    }
+    .status-rejected {
+        background: #f8d7da;
+        color: #dc3545;
+    }
+    .image-section {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+    }
+    .image-card {
+        background: white;
+        border-radius: 15px;
+        padding: 1.5rem;
+        box-shadow: 0 2px 15px rgba(0,0,0,0.05);
+    }
+    .image-card h6 {
+        color: #1a2c4e;
+        margin-bottom: 1rem;
+    }
+    .image-preview {
+        width: 100%;
+        height: 300px;
+        object-fit: cover;
+        border-radius: 10px;
+        margin-bottom: 1rem;
+        cursor: pointer;
+        transition: transform 0.3s ease;
+    }
+    .image-preview:hover {
+        transform: scale(1.02);
+    }
+    .modal-image {
+        max-width: 100%;
+        max-height: 80vh;
+        object-fit: contain;
+    }
+    .modal-content {
+        background: transparent;
+        border: none;
+    }
+    .modal-header {
+        border: none;
+        padding: 0.5rem;
+    }
+    .modal-body {
+        padding: 0;
+        text-align: center;
+    }
+    .btn-close {
+        background-color: white;
+        opacity: 0.8;
+    }
+    .btn-close:hover {
+        opacity: 1;
+    }
+    .action-buttons {
+        display: flex;
+        gap: 1rem;
+        flex-wrap: wrap;
+    }
+    .btn-action {
+        padding: 0.75rem 1.5rem;
+        border-radius: 50px;
+        font-weight: 500;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        transition: all 0.3s ease;
+    }
+    .btn-action:hover {
+        transform: translateY(-2px);
+    }
+    .btn-accept {
+        background: #d1e7dd;
+        color: #198754;
+    }
+    .btn-accept:hover {
+        background: #c3e6cb;
+    }
+    .btn-reject {
+        background: #f8d7da;
+        color: #dc3545;
+    }
+    .btn-reject:hover {
+        background: #f5c2c7;
+    }
+    .btn-download {
+        background: #cff4fc;
+        color: #0dcaf0;
+    }
+    .btn-download:hover {
+        background: #b6effb;
+    }
+    .back-button {
+        background: #e9ecef;
+        color: #1a2c4e;
+        padding: 0.75rem 1.5rem;
+        border-radius: 50px;
+        font-weight: 500;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        margin-bottom: 1rem;
+    }
+    .back-button:hover {
+        background: #dee2e6;
+        color: #1a2c4e;
+        transform: translateX(-5px);
+    }
+    @media (max-width: 768px) {
+        .info-label {
+            width: 100%;
+            margin-bottom: 0.5rem;
+        }
+        .action-buttons {
+            flex-direction: column;
+        }
+        .btn-action {
+            width: 100%;
+            justify-content: center;
+        }
+    }
+</style>
+
+<a href="{% url 'admin_applications' %}" class="back-button">
+    <i class="bi bi-arrow-left"></i> Ariza ro'yxatiga qaytish
+</a>
+
+<div class="detail-header">
+    <h4>Ariza ma'lumotlari</h4>
+    <p>Bu yerda ariza haqidagi barcha ma'lumotlarni ko'rishingiz va boshqarishingiz mumkin.</p>
+</div>
+
+<div class="info-card">
+    <div class="info-section">
+        <h5>Shaxsiy ma'lumotlar</h5>
+        <div class="info-row">
+            <div class="info-label">F.I.SH:</div>
+            <div class="info-value">{{ application.first_name }} {{ application.last_name }} {{ application.father_name }}</div>
         </div>
-        <div class="col-md-6 mb-2">
-            <span class="info-label">Familiya:</span> <span class="info-value">{{ application.last_name }}</span>
+        <div class="info-row">
+            <div class="info-label">Telefon:</div>
+            <div class="info-value">{{ application.phone }}</div>
         </div>
-        <div class="col-md-6 mb-2">
-            <span class="info-label">Otasining ismi:</span> <span class="info-value">{{ application.middle_name }}</span>
-        </div>
-        <div class="col-md-6 mb-2">
-            <span class="info-label">Telefon:</span> <span class="info-value">{{ application.phone }}</span>
-        </div>
-        <div class="col-md-6 mb-2">
-            <span class="info-label">Manzil:</span> <span class="info-value">{{ application.address }}</span>
-        </div>
-        <div class="col-md-6 mb-2">
-            <span class="info-label">Yo‘nalish:</span> <span class="info-value">{{ application.direction.name }}</span>
-        </div>
-        <div class="col-md-6 mb-2">
-            <span class="info-label">Yuborilgan sana:</span> <span class="info-value">{{ application.created_at|date:'Y-m-d H:i' }}</span>
-        </div>
-        <div class="col-md-6 mb-2">
-            <span class="info-label">Status:</span>
-            {% if application.status == 'pending' %}
-                <span class="badge bg-secondary">Ko‘rib chiqilmoqda</span>
-            {% elif application.status == 'accepted' %}
-                <span class="badge bg-success">Qabul qilingan</span>
-            {% elif application.status == 'rejected' %}
-                <span class="badge bg-danger">Bekor qilingan</span>
-            {% endif %}
+        <div class="info-row">
+            <div class="info-label">Manzil:</div>
+            <div class="info-value">{{ application.manzil }}</div>
         </div>
     </div>
-    <div class="row mb-3">
-        <div class="col-md-6 mb-3">
-            <span class="info-label">Passport rasmi:</span><br>
+
+    <div class="info-section">
+        <h5>Ariza ma'lumotlari</h5>
+        <div class="info-row">
+            <div class="info-label">Yo'nalish:</div>
+            <div class="info-value">{{ application.direction.name }}</div>
+        </div>
+        <div class="info-row">
+            <div class="info-label">Yuborilgan sana:</div>
+            <div class="info-value">{{ application.created_at|date:"d.m.Y H:i" }}</div>
+        </div>
+        <div class="info-row">
+            <div class="info-label">Status:</div>
+            <div class="info-value">
+                <div class="status-badge status-{{ application.status }}">
+                    {% if application.status == 'new' %}
+                        <i class="bi bi-star"></i> Yangi
+                    {% elif application.status == 'pending' %}
+                        <i class="bi bi-hourglass-split"></i> Ko'rib chiqilmoqda
+                    {% elif application.status == 'accepted' %}
+                        <i class="bi bi-check-circle"></i> Qabul qilingan
+                    {% elif application.status == 'rejected' %}
+                        <i class="bi bi-x-circle"></i> Bekor qilingan
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="image-section">
+        <div class="image-card">
+            <h6>Passport rasmi</h6>
             {% if application.passport_image %}
                 <a href="{{ application.passport_image.url }}" target="_blank">
-                    <img src="{{ application.passport_image.url }}" alt="Passport rasmi" class="img-thumbnail" style="max-width:180px;">
+                    <img src="{{ application.passport_image.url }}" alt="Passport rasmi" class="image-preview">
                 </a>
             {% else %}
-                <span class="text-muted">Yuklanmagan</span>
+                <div class="text-muted">Rasm yuklanmagan</div>
             {% endif %}
         </div>
-        <div class="col-md-6 mb-3">
-            <span class="info-label">Selfi rasm:</span><br>
-            {% if application.selfie_image %}
-                <a href="{{ application.selfie_image.url }}" target="_blank">
-                    <img src="{{ application.selfie_image.url }}" alt="Selfi rasm" class="img-thumbnail" style="max-width:180px;">
+        <div class="image-card">
+            <h6>Selfi rasm</h6>
+            {% if application.selfi_image %}
+                <a href="{{ application.selfi_image.url }}" target="_blank">
+                    <img src="{{ application.selfi_image.url }}" alt="Selfi rasm" class="image-preview">
                 </a>
             {% else %}
-                <span class="text-muted">Yuklanmagan</span>
+                <div class="text-muted">Rasm yuklanmagan</div>
             {% endif %}
         </div>
     </div>
-    <form method="post" class="mb-3">
-        {% csrf_token %}
-        {% if application.status != 'accepted' %}
-            <button name="set_status" value="accepted" class="btn btn-success me-2">Qabul qilish</button>
-        {% endif %}
-        {% if application.status != 'rejected' %}
-            <button name="set_status" value="rejected" class="btn btn-danger">Bekor qilish</button>
-        {% endif %}
-    </form>
-    <a href="{% url 'application_pdf' application.pk %}" class="btn btn-primary">PDF yuklab olish</a>
+
+    <div class="action-buttons">
+        <form method="post" class="d-inline">
+            {% csrf_token %}
+            {% if application.status != 'accepted' %}
+                <button type="submit" name="set_status" value="accepted" class="btn btn-action btn-accept">
+                    <i class="bi bi-check-lg"></i> Qabul qilish
+                </button>
+            {% endif %}
+            {% if application.status != 'rejected' %}
+                <button type="submit" name="set_status" value="rejected" class="btn btn-action btn-reject">
+                    <i class="bi bi-x-lg"></i> Rad etish
+                </button>
+            {% endif %}
+        </form>
+        <a href="{% url 'application_pdf' application.pk %}" class="btn btn-action btn-download">
+            <i class="bi bi-download"></i> PDF yuklab olish
+        </a>
+    </div>
+</div>
+
+<!-- Passport Modal -->
+<div class="modal fade" id="passportModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <img src="{{ application.passport_image.url }}" alt="Passport rasmi" class="modal-image">
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Selfie Modal -->
+<div class="modal fade" id="selfieModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <img src="{{ application.selfi_image.url }}" alt="Selfi rasm" class="modal-image">
+            </div>
+        </div>
+    </div>
 </div>
 {% endblock %} 

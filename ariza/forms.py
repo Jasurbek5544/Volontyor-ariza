@@ -1,54 +1,47 @@
 from django import forms
-from .models import Application
+from .models import Application, Direction, Viloyat, Tuman
 import re
 from django.contrib.auth.models import User
 
 class ApplicationForm(forms.ModelForm):
-    phone = forms.CharField(
-        label="Telefon raqam",
-        max_length=9,
-        min_length=9,
-        widget=forms.TextInput(attrs={
-            'class': 'form-control',
-            'placeholder': '901234567',
-            'pattern': r'\d{9}',
-            'title': 'Telefon raqam 9 ta raqamdan iborat bo‘lishi kerak (masalan, 901234567)'
-        })
+    viloyat = forms.ModelChoiceField(
+        queryset=Viloyat.objects.all(),
+        empty_label="Viloyatni tanlang",
+        widget=forms.Select(attrs={'class': 'form-control', 'id': 'viloyat-select'})
     )
-
+    tuman = forms.ModelChoiceField(
+        queryset=Tuman.objects.none(),
+        empty_label="Tumanni tanlang",
+        widget=forms.Select(attrs={'class': 'form-control', 'id': 'tuman-select'})
+    )
+    yashash_joyi = forms.CharField(
+        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Yashash joyingizni kiriting'})
+    )
+    
     class Meta:
         model = Application
-        fields = [
-            'first_name', 'last_name', 'middle_name', 'address', 'phone',
-            'direction', 'passport_image', 'selfie_image'
-        ]
+        fields = ['first_name', 'last_name', 'father_name', 'viloyat', 'tuman', 
+                 'yashash_joyi', 'phone', 'direction', 'passport_image', 'selfi_image']
         widgets = {
-            'first_name': forms.TextInput(attrs={
-                'class': 'form-control',
-                'placeholder': 'Ismingiz'
-            }),
-            'last_name': forms.TextInput(attrs={
-                'class': 'form-control',
-                'placeholder': 'Familiyangiz'
-            }),
-            'middle_name': forms.TextInput(attrs={
-                'class': 'form-control',
-                'placeholder': 'Otasining ismi'
-            }),
-            'address': forms.TextInput(attrs={
-                'class': 'form-control',
-                'placeholder': 'Yashash manzili'
-            }),
-            'direction': forms.Select(attrs={
-                'class': 'form-control',
-            }),
-            'passport_image': forms.ClearableFileInput(attrs={
-                'class': 'form-control',
-            }),
-            'selfie_image': forms.ClearableFileInput(attrs={
-                'class': 'form-control',
-            }),
+            'first_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Ismingizni kiriting'}),
+            'last_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Familiyangizni kiriting'}),
+            'father_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Otangizning ismini kiriting'}),
+            'phone': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Telefon raqamingizni kiriting'}),
+            'direction': forms.Select(attrs={'class': 'form-control'}),
+            'passport_image': forms.FileInput(attrs={'class': 'form-control'}),
+            'selfi_image': forms.FileInput(attrs={'class': 'form-control'}),
         }
+    
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if 'viloyat' in self.data:
+            try:
+                viloyat_id = int(self.data.get('viloyat'))
+                self.fields['tuman'].queryset = Tuman.objects.filter(viloyat_id=viloyat_id)
+            except (ValueError, TypeError):
+                pass
+        elif self.instance.pk:
+            self.fields['tuman'].queryset = self.instance.viloyat.tumanlar.all()
 
     def clean_phone(self):
         phone = self.cleaned_data.get('phone', '').strip()

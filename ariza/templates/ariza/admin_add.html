@@ -1,100 +1,149 @@
 {% extends 'ariza/base_admin.html' %}
-{% block title %}Yangi admin qo‘shish{% endblock %}
-{% block header %}Yangi admin qo‘shish{% endblock %}
-{% block extra_head %}
+{% block title %}Yangi admin qo'shish{% endblock %}
+{% block header %}Yangi admin qo'shish{% endblock %}
+{% block content %}
 <style>
-    .admin-add-card {
-        box-shadow: 0 4px 32px rgba(80,120,200,0.07);
-        border-radius: 22px;
-        border: none;
-        padding: 2.7rem 2rem;
-        background: #fff;
+    .add-header {
+        background: linear-gradient(90deg, #1a2c4e 0%, #2c4b8c 100%);
+        color: white;
+        border-radius: 15px;
+        padding: 2rem;
+        margin-bottom: 2rem;
+        box-shadow: 0 4px 20px rgba(44,75,140,0.1);
+    }
+    .add-header h4 {
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+    }
+    .add-header p {
+        opacity: 0.9;
+        margin-bottom: 0;
+    }
+    .add-form {
+        background: white;
+        border-radius: 15px;
+        padding: 2rem;
+        box-shadow: 0 2px 15px rgba(0,0,0,0.05);
     }
     .form-label {
-        font-weight: 600;
-        color: #5a7bbd;
-        letter-spacing: 0.01em;
+        font-weight: 500;
+        color: #1a2c4e;
+        margin-bottom: 0.5rem;
     }
     .form-control {
-        border-radius: 12px;
-        min-height: 48px;
-        border: 2px solid #bcdffb;
-        background: #fafdff;
-        transition: border-color 0.2s, box-shadow 0.2s;
-        width: 100%;
-        font-size: 1.08rem;
-        padding-left: 16px;
+        border-radius: 10px;
+        padding: 0.75rem 1rem;
+        border: 1px solid #dee2e6;
     }
     .form-control:focus {
-        border-color: #7da0c4;
-        box-shadow: 0 0 0 2px #e3eaf3;
-        background: #f6fafd;
+        border-color: #2c4b8c;
+        box-shadow: 0 0 0 0.2rem rgba(44,75,140,0.25);
     }
-    .input-group { width: 100%; }
-    .input-group .form-control { width: 100%; flex: 1 1 0%; }
-    .input-group-text { min-width: 48px; background: #fafdff; border: 2px solid #bcdffb; border-right: none; border-radius: 12px 0 0 12px; color: #7da0c4; font-size: 1.08rem; }
-    .btn-primary {
-        border-radius: 12px;
-        font-weight: 700;
-        font-size: 1.1rem;
-        padding: 13px 0;
-        background: linear-gradient(90deg, #7da0c4 0%, #a3c7f7 100%);
-        border: none;
-        transition: box-shadow 0.2s, background 0.2s;
-        box-shadow: 0 2px 12px #a3c7f733;
+    .btn-submit {
+        background: #1a2c4e;
+        color: white;
+        padding: 0.75rem 2rem;
+        border-radius: 50px;
+        font-weight: 500;
+        transition: all 0.3s ease;
     }
-    .btn-primary:hover {
-        background: linear-gradient(90deg, #5a7bbd 0%, #7da0c4 100%);
-        box-shadow: 0 4px 18px #a3c7f755;
+    .btn-submit:hover {
+        background: #2c4b8c;
+        transform: translateY(-2px);
     }
-    .form-section-title {
-        font-size: 1.35rem;
-        font-weight: 700;
-        color: #5a7bbd;
-        margin-bottom: 1.5rem;
-        text-align: center;
-        letter-spacing: 0.01em;
+    .btn-cancel {
+        background: #e9ecef;
+        color: #1a2c4e;
+        padding: 0.75rem 2rem;
+        border-radius: 50px;
+        font-weight: 500;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        margin-left: 1rem;
+    }
+    .btn-cancel:hover {
+        background: #dee2e6;
+        color: #1a2c4e;
+        transform: translateY(-2px);
+    }
+    .form-text {
+        color: #6c757d;
+        font-size: 0.875rem;
+        margin-top: 0.25rem;
+    }
+    .error-message {
+        color: #dc3545;
+        font-size: 0.875rem;
+        margin-top: 0.25rem;
+    }
+    @media (max-width: 768px) {
+        .add-form {
+            padding: 1.5rem;
+        }
+        .btn-cancel {
+            margin-left: 0;
+            margin-top: 1rem;
+            display: block;
+            text-align: center;
+        }
     }
 </style>
-{% endblock %}
-{% block content %}
-<div class="row justify-content-center">
-    <div class="col-md-7 col-lg-6">
-        <div class="admin-add-card">
-            <div class="form-section-title mb-4">
-                <i class="bi bi-person-plus me-2"></i>Yangi admin (foydalanuvchi) qo‘shish
-            </div>
-            <form method="post" autocomplete="off">
-                {% csrf_token %}
-                <div class="row g-3">
-                    {% for field in form %}
-                    <div class="col-12">
-                        <label class="form-label">{{ field.label }}</label>
-                        <div class="input-group">
-                            {% if field.name == 'username' %}
-                                <span class="input-group-text"><i class="bi bi-person-badge"></i></span>
-                            {% elif field.name == 'first_name' %}
-                                <span class="input-group-text"><i class="bi bi-person"></i></span>
-                            {% elif field.name == 'last_name' %}
-                                <span class="input-group-text"><i class="bi bi-person-lines-fill"></i></span>
-                            {% elif field.name == 'email' %}
-                                <span class="input-group-text"><i class="bi bi-envelope"></i></span>
-                            {% elif field.name == 'password1' or field.name == 'password2' %}
-                                <span class="input-group-text"><i class="bi bi-key"></i></span>
-                            {% endif %}
-                            {{ field }}
-                        </div>
-                        {% for error in field.errors %}
-                            <div class="text-danger small">{{ error }}</div>
-                        {% endfor %}
-                    </div>
-                    {% endfor %}
-                </div>
-                <button type="submit" class="btn btn-primary w-100 mt-4">
-                    <i class="bi bi-person-plus me-2"></i>Qo‘shish
-                </button>
-            </form>
+
+<div class="add-header">
+    <h4>Yangi admin qo'shish</h4>
+    <p>Yangi admin qo'shish uchun quyidagi formani to'ldiring.</p>
+</div>
+
+<div class="add-form">
+    <form method="post">
+        {% csrf_token %}
+        <div class="mb-3">
+            <label for="first_name" class="form-label">Ism</label>
+            <input type="text" class="form-control" id="first_name" name="first_name" required>
+            {% if form.first_name.errors %}
+                <div class="error-message">{{ form.first_name.errors.0 }}</div>
+            {% endif %}
         </div>
-    </div>
+        <div class="mb-3">
+            <label for="last_name" class="form-label">Familiya</label>
+            <input type="text" class="form-control" id="last_name" name="last_name" required>
+            {% if form.last_name.errors %}
+                <div class="error-message">{{ form.last_name.errors.0 }}</div>
+            {% endif %}
+        </div>
+        <div class="mb-3">
+            <label for="username" class="form-label">Foydalanuvchi nomi</label>
+            <input type="text" class="form-control" id="username" name="username" required>
+            {% if form.username.errors %}
+                <div class="error-message">{{ form.username.errors.0 }}</div>
+            {% endif %}
+        </div>
+        <div class="mb-3">
+            <label for="email" class="form-label">Email</label>
+            <input type="email" class="form-control" id="email" name="email" required>
+            {% if form.email.errors %}
+                <div class="error-message">{{ form.email.errors.0 }}</div>
+            {% endif %}
+        </div>
+        <div class="mb-3">
+            <label for="password1" class="form-label">Parol</label>
+            <input type="password" class="form-control" id="password1" name="password1" required>
+            {% if form.password1.errors %}
+                <div class="error-message">{{ form.password1.errors.0 }}</div>
+            {% endif %}
+            <div class="form-text">Parol kamida 8 ta belgidan iborat bo'lishi kerak.</div>
+        </div>
+        <div class="mb-3">
+            <label for="password2" class="form-label">Parolni tasdiqlang</label>
+            <input type="password" class="form-control" id="password2" name="password2" required>
+            {% if form.password2.errors %}
+                <div class="error-message">{{ form.password2.errors.0 }}</div>
+            {% endif %}
+        </div>
+        <div class="d-flex flex-wrap">
+            <button type="submit" class="btn btn-submit">Qo'shish</button>
+            <a href="{% url 'admin_admins' %}" class="btn btn-cancel">Bekor qilish</a>
+        </div>
+    </form>
 </div>
 {% endblock %} 

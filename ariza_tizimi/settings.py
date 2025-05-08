@@ -23,9 +23,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-l7wout9lk#zx%*3%jjgf6#%%i0p^7ljsgebu6k8&$qevb^_ph0'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1']
+ALLOWED_HOSTS = []
 
 
 # Application definition
@@ -55,10 +55,11 @@ ROOT_URLCONF = 'ariza_tizimi.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(BASE_DIR, 'ariza', 'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
+                'django.template.context_processors.debug',
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
@@ -118,21 +119,32 @@ USE_TZ = True
 # Statik fayllar uchun asosiy URL
 STATIC_URL = '/static/'
 
-# Statik fayllar yig‘iladigan joy (production uchun)
+# Statik fayllar yig'iladigan joy (production uchun)
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
-# Agar loyihada o‘z shaxsiy statik fayllaringiz bo‘lsa:
+# Agar loyihada o'z shaxsiy statik fayllaringiz bo'lsa:
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static'),
 ]
 
+# Media fayllar uchun sozlamalar
 MEDIA_URL = '/media/'
-MEDIA_ROOT = BASE_DIR / 'media'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-SESSION_COOKIE_AGE = 2000  # 25 minut
+SESSION_COOKIE_AGE = 2000 
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+
+# Xatolik sahifalari uchun sozlamalar
+handler404 = 'ariza.views.handler404'
+handler500 = 'ariza.views.handler500'
+
+# Production uchun qo'shimcha sozlamalar
+SECURE_SSL_REDIRECT = False
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+SESSION_COOKIE_SECURE = False
+CSRF_COOKIE_SECURE = False

@@ -2,45 +2,331 @@
 {% block title %}Arizalar{% endblock %}
 {% block header %}Arizalar{% endblock %}
 {% block content %}
-<div class="card p-4">
-    <h4 class="mb-4">Arizalar ro‘yxati</h4>
-    <table class="table table-hover align-middle">
-        <thead>
-            <tr>
-                <th>#</th>
-                <th>Ism</th>
-                <th>Familiya</th>
-                <th>Telefon</th>
-                <th>Yo‘nalish</th>
-                <th>Status</th>
-                <th>Sana</th>
-                <th></th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for app in applications %}
-            <tr>
-                <td>{{ forloop.counter }}</td>
-                <td>{{ app.first_name }}</td>
-                <td>{{ app.last_name }}</td>
-                <td>{{ app.phone }}</td>
-                <td>{{ app.direction.name }}</td>
-                <td>
-                    {% if app.status == 'pending' %}
-                        <span class="badge bg-secondary">Ko‘rib chiqilmoqda</span>
-                    {% elif app.status == 'accepted' %}
-                        <span class="badge bg-success">Qabul qilingan</span>
-                    {% elif app.status == 'rejected' %}
-                        <span class="badge bg-danger">Bekor qilingan</span>
-                    {% endif %}
-                </td>
-                <td>{{ app.created_at|date:'Y-m-d H:i' }}</td>
-                <td><a href="/dashboard/application/{{ app.pk }}/" class="btn btn-primary btn-sm">Ko‘rish</a></td>
-            </tr>
-            {% empty %}
-            <tr><td colspan="7" class="text-center">Arizalar yo‘q</td></tr>
-            {% endfor %}
-        </tbody>
-    </table>
+<style>
+    .applications-header {
+        background: linear-gradient(90deg, #1a2c4e 0%, #2c4b8c 100%);
+        color: white;
+        border-radius: 15px;
+        padding: 2rem;
+        margin-bottom: 2rem;
+        box-shadow: 0 4px 20px rgba(44,75,140,0.1);
+    }
+    .applications-header h4 {
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+    }
+    .applications-header p {
+        opacity: 0.9;
+        margin-bottom: 0;
+    }
+    .application-card {
+        background: white;
+        border-radius: 15px;
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+        transition: all 0.3s ease;
+        border: none;
+        box-shadow: 0 2px 15px rgba(0,0,0,0.05);
+    }
+    .application-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+    }
+    .application-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1rem;
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+    .application-title {
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: #1a2c4e;
+        margin: 0;
+    }
+    .application-date {
+        color: #6c757d;
+        font-size: 0.9rem;
+    }
+    .application-info {
+        margin-bottom: 1rem;
+    }
+    .info-item {
+        display: flex;
+        align-items: center;
+        margin-bottom: 0.5rem;
+        color: #5a7bbd;
+    }
+    .info-item i {
+        margin-right: 0.5rem;
+        width: 20px;
+    }
+    .application-status {
+        padding: 0.5rem 1rem;
+        border-radius: 50px;
+        font-size: 0.9rem;
+        font-weight: 500;
+    }
+    .status-new {
+        background: #e3f2fd;
+        color: #0d6efd;
+    }
+    .status-pending {
+        background: #f8f9fa;
+        color: #6c757d;
+    }
+    .status-accepted {
+        background: #d1e7dd;
+        color: #198754;
+    }
+    .status-rejected {
+        background: #f8d7da;
+        color: #dc3545;
+    }
+    .application-actions {
+        display: flex;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+    }
+    .btn-action {
+        padding: 0.5rem 1rem;
+        border-radius: 50px;
+        font-size: 0.9rem;
+        font-weight: 500;
+        transition: all 0.3s ease;
+    }
+    .btn-action:hover {
+        transform: translateY(-2px);
+    }
+    .btn-view {
+        background: #e9ecef;
+        color: #1a2c4e;
+    }
+    .btn-view:hover {
+        background: #dee2e6;
+    }
+    .btn-accept {
+        background: #d1e7dd;
+        color: #198754;
+    }
+    .btn-accept:hover {
+        background: #c3e6cb;
+    }
+    .btn-reject {
+        background: #f8d7da;
+        color: #dc3545;
+    }
+    .btn-reject:hover {
+        background: #f5c2c7;
+    }
+    .btn-download {
+        background: #cff4fc;
+        color: #0dcaf0;
+    }
+    .btn-download:hover {
+        background: #b6effb;
+    }
+    .empty-state {
+        text-align: center;
+        padding: 3rem;
+        background: white;
+        border-radius: 15px;
+        box-shadow: 0 2px 15px rgba(0,0,0,0.05);
+    }
+    .empty-state i {
+        font-size: 3rem;
+        color: #6c757d;
+        margin-bottom: 1rem;
+    }
+    .empty-state h5 {
+        color: #1a2c4e;
+        margin-bottom: 0.5rem;
+    }
+    .empty-state p {
+        color: #6c757d;
+        margin-bottom: 0;
+    }
+    @media (max-width: 768px) {
+        .application-header {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+        .application-actions {
+            width: 100%;
+            justify-content: flex-start;
+        }
+        .btn-action {
+            flex: 1;
+            text-align: center;
+        }
+    }
+    .filter-section {
+        background: white;
+        border-radius: 15px;
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+        box-shadow: 0 2px 15px rgba(0,0,0,0.05);
+    }
+    .filter-title {
+        font-weight: 600;
+        color: var(--primary-color);
+        margin-bottom: 1rem;
+    }
+    .filter-buttons {
+        display: flex;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+    }
+    .filter-btn {
+        padding: 0.5rem 1rem;
+        border-radius: 50px;
+        font-weight: 500;
+        border: none;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    .filter-btn.active {
+        color: white;
+    }
+    .filter-btn.all {
+        background: #e9ecef;
+        color: #495057;
+    }
+    .filter-btn.all:hover, .filter-btn.all.active {
+        background: #495057;
+        color: white;
+    }
+    .filter-btn.new {
+        background: #cff4fc;
+        color: #0dcaf0;
+    }
+    .filter-btn.new:hover, .filter-btn.new.active {
+        background: #0dcaf0;
+        color: white;
+    }
+    .filter-btn.pending {
+        background: #fff3cd;
+        color: #ffc107;
+    }
+    .filter-btn.pending:hover, .filter-btn.pending.active {
+        background: #ffc107;
+        color: white;
+    }
+    .filter-btn.accepted {
+        background: #d1e7dd;
+        color: #198754;
+    }
+    .filter-btn.accepted:hover, .filter-btn.accepted.active {
+        background: #198754;
+        color: white;
+    }
+    .filter-btn.rejected {
+        background: #f8d7da;
+        color: #dc3545;
+    }
+    .filter-btn.rejected:hover, .filter-btn.rejected.active {
+        background: #dc3545;
+        color: white;
+    }
+    @media (max-width: 768px) {
+        .filter-buttons {
+            flex-direction: column;
+        }
+        .filter-btn {
+            width: 100%;
+            justify-content: center;
+        }
+    }
+</style>
+
+<div class="filter-section">
+    <div class="filter-title">Filtrlar</div>
+    <div class="filter-buttons">
+        <a href="{% url 'admin_applications' %}" class="filter-btn all {% if not request.GET.status %}active{% endif %}">
+            <i class="bi bi-grid"></i> Barchasi
+        </a>
+        <a href="{% url 'admin_applications' %}?status=new" class="filter-btn new {% if request.GET.status == 'new' %}active{% endif %}">
+            <i class="bi bi-star"></i> Yangi
+        </a>
+        <a href="{% url 'admin_applications' %}?status=pending" class="filter-btn pending {% if request.GET.status == 'pending' %}active{% endif %}">
+            <i class="bi bi-clock"></i> Ko'rib chiqilmoqda
+        </a>
+        <a href="{% url 'admin_applications' %}?status=accepted" class="filter-btn accepted {% if request.GET.status == 'accepted' %}active{% endif %}">
+            <i class="bi bi-check-lg"></i> Qabul qilingan
+        </a>
+        <a href="{% url 'admin_applications' %}?status=rejected" class="filter-btn rejected {% if request.GET.status == 'rejected' %}active{% endif %}">
+            <i class="bi bi-x-lg"></i> Rad etilgan
+        </a>
+    </div>
 </div>
+
+<div class="applications-header">
+    <h4>Arizalar ro'yxati</h4>
+    <p>Bu yerda barcha arizalarni ko'rishingiz, tasdiqlashingiz yoki rad etishingiz mumkin.</p>
+</div>
+
+{% if applications %}
+    {% for application in applications %}
+    <div class="application-card">
+        <div class="application-header">
+            <div>
+                <h5 class="application-title">{{ application.first_name }} {{ application.last_name }} {{ application.father_name }}</h5>
+                <div class="application-date">
+                    <i class="bi bi-telephone"></i> {{ application.phone }}
+                </div>
+            </div>
+            <div class="application-status status-{{ application.status }}">
+                {% if application.status == 'new' %}
+                    <i class="bi bi-star"></i> Yangi
+                {% elif application.status == 'pending' %}
+                    <i class="bi bi-hourglass-split"></i> Ko'rib chiqilmoqda
+                {% elif application.status == 'accepted' %}
+                    <i class="bi bi-check-circle"></i> Qabul qilingan
+                {% elif application.status == 'rejected' %}
+                    <i class="bi bi-x-circle"></i> Bekor qilingan
+                {% endif %}
+            </div>
+        </div>
+        
+        <div class="application-info">
+            <div class="info-item">
+                <i class="bi bi-geo-alt"></i>
+                {{ application.viloyat.nomi }}, {{ application.tuman.nomi }}
+            </div>
+            <div class="info-item">
+                <i class="bi bi-calendar3"></i>
+                {{ application.created_at|date:"d.m.Y H:i" }}
+            </div>
+        </div>
+
+        <div class="application-actions">
+            <a href="{% url 'admin_application_detail' application.id %}" class="btn btn-action btn-view">
+                <i class="bi bi-eye"></i> Ko'rish
+            </a>
+            {% if application.status == 'pending' %}
+                <a href="{% url 'admin_application_detail' application.id %}?action=accept" class="btn btn-action btn-accept">
+                    <i class="bi bi-check-lg"></i> Qabul qilish
+                </a>
+                <a href="{% url 'admin_application_detail' application.id %}?action=reject" class="btn btn-action btn-reject">
+                    <i class="bi bi-x-lg"></i> Rad etish
+                </a>
+            {% endif %}
+            <a href="{% url 'application_pdf' application.id %}" class="btn btn-action btn-download">
+                <i class="bi bi-download"></i> PDF
+            </a>
+        </div>
+    </div>
+    {% endfor %}
+{% else %}
+    <div class="empty-state">
+        <i class="bi bi-inbox"></i>
+        <h5>Arizalar mavjud emas</h5>
+        <p>Hozircha hech qanday ariza kiritilmagan.</p>
+    </div>
+{% endif %}
 {% endblock %} 

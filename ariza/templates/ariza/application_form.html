@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+{% load static %}
 <html lang="uz">
 <head>
     <meta charset="UTF-8">
@@ -6,6 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <style>
         body {
             background: linear-gradient(120deg, #f6fafd 60%, #e9f1fa 100%);
@@ -14,13 +16,16 @@
             box-shadow: 0 4px 32px rgba(80,120,200,0.07);
             border-radius: 22px;
             border: none;
-            padding: 2.7rem 2rem;
+            padding: 3rem;
             background: #fff;
+            margin: 0 auto;
+            max-width: 900px;
         }
         .form-label {
             font-weight: 600;
             color: #5a7bbd;
             letter-spacing: 0.01em;
+            font-size: 1.1rem;
         }
         .form-control, .form-select {
             border-radius: 12px;
@@ -39,7 +44,10 @@
         }
         .input-group { width: 100%; }
         .input-group .form-control, .input-group .form-select { width: 100%; flex: 1 1 0%; }
-        .input-group-text { min-width: 56px; }
+        .input-group-text { 
+            min-width: 56px;
+            font-size: 1.1rem;
+        }
         .btn-primary {
             border-radius: 12px;
             font-weight: 700;
@@ -65,63 +73,158 @@
         .required-star {
             color: #e57373;
         }
+        .header-logo {
+            height: 60px;
+            margin-right: 15px;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
+            background-color: white;
+            padding: 5px;
+            border-radius: 8px;
+        }
+        .header-title {
+            color: #5a7bbd;
+            font-weight: 700;
+            margin-bottom: 0;
+        }
+        .header-subtitle {
+            color: #7da0c4;
+            font-size: 1.1rem;
+            margin-bottom: 0;
+        }
+        .container {
+            max-width: 1200px;
+        }
     </style>
 </head>
 <body>
-<div class="container py-5">
-    <div class="row justify-content-center">
-        <div class="col-lg-6 col-md-8">
-            <div class="main-card">
-                <div class="form-section-title mb-4">
-                    <i class="bi bi-pencil-square me-2"></i>Ariza yuborish
-                </div>
-                <form method="post" enctype="multipart/form-data" autocomplete="off">
-                    {% csrf_token %}
-                    <div class="row g-3">
-                        {% for field in form %}
-                        <div class="col-12">
-                            <label class="form-label">{{ field.label }}{% if field.field.required %}<span class="required-star">*</span>{% endif %}</label>
-                            <div class="input-group">
-                                {% if field.name == 'phone' %}
+    {% include 'ariza/header.html' %}
+    
+    <div class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-12">
+                <div class="main-card">
+                    <form method="post" enctype="multipart/form-data" autocomplete="off">
+                        {% csrf_token %}
+                        <div class="row g-3">
+                            <!-- Ism -->
+                            <div class="col-12">
+                                <label class="form-label">Ism<span class="required-star">*</span></label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="bi bi-person"></i></span>
+                                    {{ form.first_name }}
+                                </div>
+                            </div>
+
+                            <!-- Familiya -->
+                            <div class="col-12">
+                                <label class="form-label">Familiya<span class="required-star">*</span></label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="bi bi-person-badge"></i></span>
+                                    {{ form.last_name }}
+                                </div>
+                            </div>
+
+                            <!-- Otasining ismi -->
+                            <div class="col-12">
+                                <label class="form-label">Otasining ismi<span class="required-star">*</span></label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="bi bi-person-lines-fill"></i></span>
+                                    {{ form.father_name }}
+                                </div>
+                            </div>
+
+                            <!-- Viloyat -->
+                            <div class="col-12">
+                                <label class="form-label">Viloyat<span class="required-star">*</span></label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="bi bi-geo-alt"></i></span>
+                                    {{ form.viloyat }}
+                                </div>
+                            </div>
+
+                            <!-- Tuman -->
+                            <div class="col-12">
+                                <label class="form-label">Tuman<span class="required-star">*</span></label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="bi bi-geo-alt-fill"></i></span>
+                                    {{ form.tuman }}
+                                </div>
+                            </div>
+
+                            <!-- Yashash joyi -->
+                            <div class="col-12">
+                                <label class="form-label">Yashash joyi<span class="required-star">*</span></label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="bi bi-house"></i></span>
+                                    {{ form.yashash_joyi }}
+                                </div>
+                            </div>
+
+                            <!-- Telefon -->
+                            <div class="col-12">
+                                <label class="form-label">Telefon<span class="required-star">*</span></label>
+                                <div class="input-group">
                                     <span class="input-group-text">+998</span>
                                     <input type="text" name="phone" maxlength="9" pattern="\d{9}" class="form-control" placeholder="901234567" required>
-                                {% else %}
-                                    {% if field.name == 'first_name' %}
-                                        <span class="input-group-text"><i class="bi bi-person"></i></span>
-                                    {% elif field.name == 'last_name' %}
-                                        <span class="input-group-text"><i class="bi bi-person-badge"></i></span>
-                                    {% elif field.name == 'middle_name' %}
-                                        <span class="input-group-text"><i class="bi bi-person-lines-fill"></i></span>
-                                    {% elif field.name == 'address' %}
-                                        <span class="input-group-text"><i class="bi bi-geo-alt"></i></span>
-                                    {% elif field.name == 'direction' %}
-                                        <span class="input-group-text"><i class="bi bi-diagram-3"></i></span>
-                                    {% elif field.name == 'passport_image' %}
-                                        <span class="input-group-text"><i class="bi bi-card-image"></i></span>
-                                    {% elif field.name == 'selfie_image' %}
-                                        <span class="input-group-text"><i class="bi bi-camera"></i></span>
-                                    {% else %}
-                                        <span class="input-group-text"><i class="bi bi-pencil"></i></span>
-                                    {% endif %}
-                                    {{ field }}
-                                {% endif %}
+                                </div>
                             </div>
-                            {% if field.help_text %}
-                                <div class="form-text">{{ field.help_text }}</div>
-                            {% endif %}
-                            {% for error in field.errors %}
-                                <div class="text-danger small">{{ error }}</div>
-                            {% endfor %}
+
+                            <!-- Yo'nalish -->
+                            <div class="col-12">
+                                <label class="form-label">Yo'nalish<span class="required-star">*</span></label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="bi bi-diagram-3"></i></span>
+                                    {{ form.direction }}
+                                </div>
+                            </div>
+
+                            <!-- Passport rasmi -->
+                            <div class="col-12">
+                                <label class="form-label">Passport rasmi<span class="required-star">*</span></label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="bi bi-card-image"></i></span>
+                                    {{ form.passport_image }}
+                                </div>
+                            </div>
+
+                            <!-- Selfi rasmi -->
+                            <div class="col-12">
+                                <label class="form-label">Selfi rasmi<span class="required-star">*</span></label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="bi bi-camera"></i></span>
+                                    {{ form.selfi_image }}
+                                </div>
+                            </div>
                         </div>
-                        {% endfor %}
-                    </div>
-                    <button type="submit" class="btn btn-primary w-100 mt-4">
-                        <i class="bi bi-send me-2"></i>Yuborish
-                    </button>
-                </form>
+                        <button type="submit" class="btn btn-primary w-100 mt-4">
+                            <i class="bi bi-send me-2"></i>Yuborish
+                        </button>
+                    </form>
+                </div>
             </div>
         </div>
     </div>
-</div>
+
+    <script>
+        $("#viloyat-select").change(function () {
+            var viloyatId = $(this).val();
+            $.ajax({
+                url: "{% url 'ajax_load_tumanlar' %}",
+                data: {
+                    'viloyat_id': viloyatId
+                },
+                success: function (data) {
+                    var tumanSelect = $("#tuman-select");
+                    tumanSelect.empty();
+                    tumanSelect.append('<option value="">Tumanni tanlang</option>');
+                    $.each(data, function (index, item) {
+                        tumanSelect.append(
+                            $('<option></option>').val(item.id).html(item.nomi)
+                        );
+                    });
+                }
+            });
+        });
+    </script>
 </body>
 </html>

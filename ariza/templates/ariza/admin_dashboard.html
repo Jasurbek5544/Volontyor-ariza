@@ -2,44 +2,105 @@
 {% block title %}Dashboard{% endblock %}
 {% block header %}Dashboard{% endblock %}
 {% block content %}
-<div class="card p-4 mb-4">
-    <h4 class="mb-0">Xush kelibsiz, {{ request.user.get_full_name|default:request.user.username }}!</h4>
-    <p class="mb-0">Bu admin panelda siz arizalarni ko‘rishingiz va PDF yuklab olishingiz mumkin.</p>
+<style>
+    .welcome-card {
+        background: linear-gradient(90deg, #1a2c4e 0%, #2c4b8c 100%);
+        color: white;
+        border-radius: 15px;
+        padding: 2rem;
+        margin-bottom: 2rem;
+        box-shadow: 0 4px 20px rgba(44,75,140,0.1);
+    }
+    .welcome-card h4 {
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+    }
+    .welcome-card p {
+        opacity: 0.9;
+        margin-bottom: 0;
+    }
+    .stats-card {
+        background: white;
+        border-radius: 15px;
+        padding: 1.5rem;
+        height: 100%;
+        transition: all 0.3s ease;
+        border: none;
+        box-shadow: 0 2px 15px rgba(0,0,0,0.05);
+    }
+    .stats-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+    }
+    .stats-icon {
+        font-size: 2.5rem;
+        margin-bottom: 1rem;
+    }
+    .stats-title {
+        color: #5a7bbd;
+        font-size: 1.1rem;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+    }
+    .stats-number {
+        font-size: 2rem;
+        font-weight: 700;
+        color: #1a2c4e;
+    }
+    .stats-card.total .stats-icon { color: #2c4b8c; }
+    .stats-card.admins .stats-icon { color: #2c4b8c; }
+    .stats-card.pending .stats-icon { color: #6c757d; }
+    .stats-card.accepted .stats-icon { color: #198754; }
+    .stats-card.rejected .stats-icon { color: #dc3545; }
+    .stats-card.accepted .stats-number { color: #198754; }
+    .stats-card.rejected .stats-number { color: #dc3545; }
+    .stats-card.pending .stats-number { color: #6c757d; }
+    @media (max-width: 768px) {
+        .stats-card {
+            margin-bottom: 1rem;
+        }
+    }
+</style>
+
+<div class="welcome-card">
+    <h4>Xush kelibsiz, {{ request.user.get_full_name|default:request.user.username }}!</h4>
+    <p>Bu admin panelda siz arizalarni ko'rishingiz va PDF yuklab olishingiz mumkin.</p>
 </div>
-<div class="row g-4 mb-4">
+
+<div class="row g-4">
     <div class="col-md-4">
-        <div class="card p-4 text-center">
-            <div class="mb-2"><i class="bi bi-list-ul" style="font-size:2rem;color:#0d6efd;"></i></div>
-            <h5 class="mb-1">Jami arizalar</h5>
-            <div class="display-6">{{ applications_count }}</div>
+        <div class="stats-card total">
+            <i class="bi bi-list-ul stats-icon"></i>
+            <div class="stats-title">Jami arizalar</div>
+            <div class="stats-number">{{ applications_count }}</div>
         </div>
     </div>
     <div class="col-md-4">
-        <div class="card p-4 text-center">
-            <div class="mb-2"><i class="bi bi-people" style="font-size:2rem;color:#0d6efd;"></i></div>
-            <h5 class="mb-1">Adminlar soni</h5>
-            <div class="display-6">{{ admins_count }}</div>
+        <div class="stats-card admins">
+            <i class="bi bi-people stats-icon"></i>
+            <div class="stats-title">Adminlar soni</div>
+            <div class="stats-number">{{ admins_count }}</div>
         </div>
     </div>
     <div class="col-md-4">
-        <div class="card p-4 text-center">
-            <div class="mb-2"><i class="bi bi-hourglass-split" style="font-size:2rem;color:#6c757d;"></i></div>
-            <h5 class="mb-1">Ko‘rib chiqilmoqda</h5>
-            <div class="display-6 text-secondary">{{ pending_count }}</div>
+        <div class="stats-card pending">
+            <i class="bi bi-hourglass-split stats-icon"></i>
+            <div class="stats-title">Ko'rib chiqilmoqda</div>
+            <div class="stats-number">{{ pending_count }}</div>
         </div>
     </div>
     <div class="col-md-6">
-        <div class="card p-4 text-center">
-            <div class="mb-2"><i class="bi bi-check-circle" style="font-size:2rem;color:#198754;"></i></div>
-            <h5 class="mb-1">Qabul qilingan arizalar</h5>
-            <div class="display-6 text-success">{{ accepted_count }}</div>
+        <div class="stats-card accepted">
+            <i class="bi bi-check-circle stats-icon"></i>
+            <div class="stats-title">Qabul qilingan arizalar</div>
+            <div class="stats-number">{{ accepted_count }}</div>
         </div>
     </div>
     <div class="col-md-6">
-        <div class="card p-4 text-center">
-            <div class="mb-2"><i class="bi bi-x-circle" style="font-size:2rem;color:#dc3545;"></i></div>
-            <h5 class="mb-1">Bekor qilingan arizalar</h5>
-            <div class="display-6 text-danger">{{ rejected_count }}</div>
+        <div class="stats-card rejected">
+            <i class="bi bi-x-circle stats-icon"></i>
+            <div class="stats-title">Bekor qilingan arizalar</div>
+            <div class="stats-number">{{ rejected_count }}</div>
         </div>
     </div>
 </div>

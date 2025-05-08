@@ -1,0 +1,49 @@
+{% load static %}
+<nav class="navbar navbar-expand-lg navbar-dark" style="background: linear-gradient(90deg, #1a2c4e 0%, #2c4b8c 100%);">
+    <div class="container">
+        <div class="d-flex align-items-center">
+            <div class="header-logo-container">
+                <img src="{% static 'logo.png' %}" alt="Logo" class="header-logo">
+            </div>
+            <div>
+                <h3 class="header-title mb-0">Inclusive Rivojlanish Markazi</h3>
+                <h4 class="header-subtitle mb-0">Ariza yuborish</h4>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<style>
+    .header-logo-container {
+        padding: 4px;
+        border-radius: 12px;
+        margin-right: 15px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 70px; /* Yangi qo‘shilgan */
+    }
+
+    .header-logo {
+        height: 65px;
+        filter: brightness(0) invert(1); /* Oq rang effektini beradi */
+        background-color: transparent;
+        margin: 0;
+}
+
+
+    .header-title {
+        color: #ffffff;
+        font-weight: 700;
+        font-size: 1.4rem;
+    }
+
+    .header-subtitle {
+        color: rgba(255, 255, 255, 0.8);
+        font-size: 1.1rem;
+    }
+
+    .navbar {
+        padding: 1rem 0;
+    }
+</style>

@@ -11,4 +11,7 @@ urlpatterns = [
     path('dashboard/application/<int:pk>/', views.admin_application_detail, name='admin_application_detail'),
     path('dashboard/admins/', views.admin_admins, name='admin_admins'),
     path('dashboard/admins/add/', views.admin_add, name='admin_add'),
+    path('dashboard/admins/<int:admin_id>/edit/', views.admin_edit, name='admin_edit'),
+    path('dashboard/admins/<int:admin_id>/delete/', views.admin_delete, name='admin_delete'),
+    path('ajax/load-tumanlar/', views.load_tumanlar, name='ajax_load_tumanlar'),
 ] 
