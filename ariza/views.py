@@ -28,7 +28,7 @@ def application_pdf(request, pk):
     template_path = 'ariza/application_pdf.html'
     context = {
         'application': application,
-        'manzil': f"{application.viloyat.nomi} viloyati, {application.tuman.nomi}, {application.yashash_joyi}"
+        'manzil': f"{application.viloyat.nomi}, {application.tuman.nomi}, {application.yashash_joyi}"
     }
     response = HttpResponse(content_type='application/pdf')
     filename = f"ariza_{application.pk}_{application.last_name}_{application.first_name}.pdf"
