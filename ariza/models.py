@@ -53,7 +53,7 @@ class Application(models.Model):
     
     @property
     def manzil(self):
-        return f"{self.viloyat.nomi} viloyati, {self.tuman.nomi}, {self.yashash_joyi}"
+        return f"{self.viloyat.nomi}, {self.tuman.nomi}, {self.yashash_joyi}"
     
     class Meta:
         verbose_name = "Ariza"
